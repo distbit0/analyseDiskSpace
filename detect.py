@@ -7,7 +7,7 @@ import re
 config = {}
 config["lines"] = 100
 config["max_depth"] = 7
-config["directories_to_analyze"] = ["/"]
+config["directory_to_analyze"] = "/"
 config["minChildParentRatio"] = 0.75
 config["excludedSubPaths"] = ["pimania/Syncs"]
 
@@ -63,12 +63,13 @@ def filter_paths(disk_usage_data):
 
 
 if __name__ == "__main__":
-    for directory in config["directories_to_analyze"]:
-        print(f"Analyzing disk usage for directory: {directory}")
-        disk_usage_data = analyze_disk_usage(directory, config["max_depth"])
+    print(f"Analyzing disk usage for directory: {config['directory_to_analyze']}")
+    disk_usage_data = analyze_disk_usage(
+        config["directory_to_analyze"], config["max_depth"]
+    )
 
-        filtered_data = filter_paths(disk_usage_data)
+    filtered_data = filter_paths(disk_usage_data)
 
-        for size, path in filtered_data:
-            size = str(round(int(size.strip("B")) / 1000000000, 2)) + "GB"
-            print(f"{size}\t{path}")
+    for size, path in filtered_data:
+        size = str(round(int(size.strip("B")) / 1000000000, 2)) + "GB"
+        print(f"{size}\t{path}")
