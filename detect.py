@@ -2,14 +2,7 @@
 
 import subprocess
 import re
-
-
-config = {}
-config["lines"] = 100
-config["max_depth"] = 7
-config["directory_to_analyze"] = "/"
-config["minChildParentRatio"] = 0.75
-config["excludedSubPaths"] = ["pimania/Syncs"]
+import argparse
 
 
 def execute_command(command):
@@ -60,6 +53,26 @@ def filter_paths(disk_usage_data):
                     filtered_data.append((str(parent_size) + "B", parent_path))
 
     return filtered_data
+
+
+parser = argparse.ArgumentParser(description="Disk usage analysis script")
+parser.add_argument("--lines", default=100, type=int)
+parser.add_argument("--max_depth", default=7, type=int)
+parser.add_argument("--directory_to_analyze", default="/", type=str)
+parser.add_argument("--minChildParentRatio", default=0.75, type=float)
+parser.add_argument(
+    "--excludedSubPaths", default=["pimania/Syncs"], nargs="+", type=list
+)
+
+args = parser.parse_args()
+
+config = {
+    "lines": args.lines,
+    "max_depth": args.max_depth,
+    "directory_to_analyze": args.directory_to_analyze,
+    "minChildParentRatio": args.minChildParentRatio,
+    "excludedSubPaths": args.excludedSubPaths,
+}
 
 
 if __name__ == "__main__":
