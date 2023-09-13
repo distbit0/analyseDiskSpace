@@ -57,8 +57,8 @@ def filter_paths(disk_usage_data):
 
 parser = argparse.ArgumentParser(description="Disk usage analysis script")
 parser.add_argument("--lines", default=100, type=int)
-parser.add_argument("--max_depth", default=7, type=int)
-parser.add_argument("--directory_to_analyze", default="/", type=str)
+parser.add_argument("--maxDepth", default=7, type=int)
+parser.add_argument("--dir", default="/", type=str)
 parser.add_argument("--minChildParentRatio", default=0.75, type=float)
 parser.add_argument(
     "--excludedSubPaths", default=["pimania/Syncs"], nargs="+", type=list
