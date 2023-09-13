@@ -9,6 +9,7 @@ config["lines"] = 100
 config["max_depth"] = 7
 config["directories_to_analyze"] = ["/"]
 config["minChildParentRatio"] = 0.75
+config["excludedSubPaths"] = ["pimania/Syncs"]
 
 
 def execute_command(command):
@@ -54,8 +55,9 @@ def filter_paths(disk_usage_data):
                 combined_child_size += child_size
 
         if combined_child_size / parent_size < config["minChildParentRatio"]:
-            if "pimania/Syncs" not in parent_path:
-                filtered_data.append((str(parent_size) + "B", parent_path))
+            for path in config["excludedSubPaths"]:
+                if path not in parent_path:
+                    filtered_data.append((str(parent_size) + "B", parent_path))
 
     return filtered_data
 
