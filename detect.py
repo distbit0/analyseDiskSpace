@@ -69,7 +69,7 @@ def filter_paths(disk_usage_data):
 parser = argparse.ArgumentParser(description="Disk usage analysis script")
 parser.add_argument("--l", default=100, type=int)
 parser.add_argument("--depth", default=7, type=int)
-parser.add_argument("--dir", default="/home/pimania/Syncs/Obsidian", type=str)
+parser.add_argument("--dir", default="/", type=str)
 parser.add_argument("--sizeRatio", default=0.75, type=float)
 parser.add_argument("--excludedPaths", default=[], nargs="+", type=list)
 
