@@ -39,46 +39,55 @@ def filter_paths(disk_usage_data):
 
     # Then, proceed with the existing logic using valid_lines
     converted_data = [(convert_size_to_bytes(size), path) for size, path in valid_lines]
-    filtered_data = []
+    filtered_data, excludePath = [], False
 
     for parent_size, parent_path in converted_data:
         combined_child_size = 0
         for child_size, child_path in converted_data:
             if child_path.startswith(f"{parent_path}/"):
-                combined_child_size += child_size
+                remaining_path = child_path[len(parent_path) + 1 :]
+                if remaining_path.count("/") == 0:
+                    combined_child_size += child_size
 
-        if combined_child_size / parent_size < config["minChildParentRatio"]:
+        if combined_child_size / parent_size < config["maxChildParentRatio"]:
             for path in config["excludedSubPaths"]:
-                if path not in parent_path:
-                    filtered_data.append((str(parent_size) + "B", parent_path))
+                if path in parent_path:
+                    excludePath = True
+            if not excludePath:
+                filtered_data.append((str(parent_size) + "B", parent_path))
+
+        # print(
+        #     combined_child_size / parent_size,
+        #     parent_path,
+        #     config["maxChildParentRatio"],
+        #     excludePath,
+        # )
 
     return filtered_data
 
 
 parser = argparse.ArgumentParser(description="Disk usage analysis script")
-parser.add_argument("--lines", default=100, type=int)
-parser.add_argument("--maxDepth", default=7, type=int)
-parser.add_argument("--dir", default="/", type=str)
-parser.add_argument("--minChildParentRatio", default=0.75, type=float)
-parser.add_argument(
-    "--excludedSubPaths", default=["pimania/Syncs"], nargs="+", type=list
-)
+parser.add_argument("--l", default=100, type=int)
+parser.add_argument("--depth", default=7, type=int)
+parser.add_argument("--dir", default="/home/pimania/Syncs/Obsidian", type=str)
+parser.add_argument("--sizeRatio", default=0.75, type=float)
+parser.add_argument("--excludedPaths", default=[], nargs="+", type=list)
 
 args = parser.parse_args()
 
 config = {
-    "lines": args.lines,
-    "max_depth": args.max_depth,
-    "directory_to_analyze": args.directory_to_analyze,
-    "minChildParentRatio": args.minChildParentRatio,
-    "excludedSubPaths": args.excludedSubPaths,
+    "lines": args.l,
+    "maxDepth": args.depth,
+    "directory_to_analyze": args.dir,
+    "maxChildParentRatio": args.sizeRatio,
+    "excludedSubPaths": args.excludedPaths,
 }
 
 
 if __name__ == "__main__":
     print(f"Analyzing disk usage for directory: {config['directory_to_analyze']}")
     disk_usage_data = analyze_disk_usage(
-        config["directory_to_analyze"], config["max_depth"]
+        config["directory_to_analyze"], config["maxDepth"]
     )
 
     filtered_data = filter_paths(disk_usage_data)
