@@ -1,5 +1,5 @@
 # Integrating the new filter_paths function into the original script
-
+import os
 import subprocess
 import re
 import argparse
@@ -85,6 +85,11 @@ config = {
 
 
 if __name__ == "__main__":
+    # abort if not run with sudo
+    if not os.geteuid() == 0 and config["directory_to_analyze"] == "/":
+        print("This script must be run as root")
+        exit(1)
+
     print(f"Analyzing disk usage for directory: {config['directory_to_analyze']}")
     disk_usage_data = analyze_disk_usage(
         config["directory_to_analyze"], config["maxDepth"]
